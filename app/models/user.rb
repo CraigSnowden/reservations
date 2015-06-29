@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   # using the :database_authenticatable module and also allow for password
   # resets.
   if ENV['CAS_AUTH']
-    devise :cas_authenticatable
+    devise :database_authenticatable, :omniauthable, :omniauth_providers => [:remote_user]
   else
     devise :database_authenticatable, :recoverable, :rememberable
   end
@@ -87,6 +87,18 @@ class User < ActiveRecord::Base
     reservations.collect(&:equipment_item).flatten
   end
 
+  def self.from_omniauth(auth)
+    where(cas_login: auth.uid).first_or_create do |user|
+      ldap_data = self.search_ldap(auth.uid)
+      user.email = ldap_data["email"]
+      user.password = Devise.friendly_token[0,20]
+      user.first_name = ldap_data["first_name"]
+      user.last_name = ldap_data["last_name"]
+      user.nickname = ldap_data["nickname"]
+      user.username = ldap_data["username"]
+    end
+  end
+
   # rubocop:disable AbcSize, MethodLength, PerceivedComplexity
   def self.search_ldap(login)
     return nil if login.blank?
@@ -100,7 +112,8 @@ class User < ActiveRecord::Base
 
     # set up LDAP object and filter parameters
     ldap = Net::LDAP.new(host: Rails.application.secrets.ldap_host,
-                         port: Rails.application.secrets.ldap_port)
+                         port: Rails.application.secrets.ldap_port,
+                         encryption: :simple_tls)
     filter = Net::LDAP::Filter.eq(filter_param, login)
 
     # set up attributes hash based on configuration

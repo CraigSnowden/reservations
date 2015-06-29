@@ -159,6 +159,7 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     haml (4.0.6)
       tilt
+    hashie (3.4.2)
     hike (1.2.3)
     hitimes (1.2.2)
     http_parser.rb (0.6.0)
@@ -223,6 +224,11 @@ GEM
       shellany (~> 0.0)
     octokit (3.8.0)
       sawyer (~> 0.6.0, >= 0.5.3)
+    omniauth (1.2.2)
+      hashie (>= 1.2, < 4)
+      rack (~> 1.0)
+    omniauth-remote-user (0.0.6)
+      omniauth (~> 1.0)
     orm_adapter (0.5.0)
     paperclip (4.2.1)
       activemodel (>= 3.0.0)
@@ -449,6 +455,7 @@ DEPENDENCIES
   mysql2 (~> 0.3.18)
   net-ldap (~> 0.11)
   nilify_blanks (~> 1.2.0)
+  omniauth-remote-user
   paperclip (~> 4.2.1)
   party_foul (~> 1.5.5)
   permanent_records (~> 3.2.0)
@@ -481,3 +488,6 @@ DEPENDENCIES
   uglifier (~> 2.7.0)
   unicorn (~> 4.8.3)
   whenever (~> 0.9.4)
+
+BUNDLED WITH
+   1.10.3
