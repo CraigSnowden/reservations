@@ -101,7 +101,6 @@ group :production do
   gem 'party_foul', '~> 1.5.5'
   gem 'dotenv-deployment', '~> 0.2.0'
   # for Heroku
-  gem 'mysql2'
   gem 'unicorn', '~> 4.8.3'
   gem 'rack-timeout', '~> 0.2.0'
   gem 'rails_12factor', '~> 0.0.3'
