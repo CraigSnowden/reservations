@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-md-offset-2 col-md-10">
       <%= f.button :submit, 'Sign in' %>
-      <%= link_to "Sign in with EASE", user_omniauth_authorize_path(:remote_user) %>
+      <%= link_to "Sign in with EASE", user_omniauth_authorize_path(:remoteuser) %>
       <% if AppConfig.check(:enable_new_users) %>
         <%= link_to 'Register', new_user_path, class: 'btn btn-default' %>
       <% end %>

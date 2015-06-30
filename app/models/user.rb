@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   # using the :database_authenticatable module and also allow for password
   # resets.
   if ENV['CAS_AUTH']
-    devise :database_authenticatable, :omniauthable, :omniauth_providers => [:remote_user]
+    devise :database_authenticatable, :omniauthable, :omniauth_providers => [:remoteuser]
   else
     devise :database_authenticatable, :recoverable, :rememberable
   end

@@ -1,5 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  def remote_user
+  def remoteuser
     @user = User.from_omniauth(request.env["omniauth.auth"])
 
     if @user.persisted?
