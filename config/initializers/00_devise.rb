@@ -72,3 +72,13 @@ Devise.setup do |config|
 
 
 end
+
+require 'devise_remote_user'
+
+DeviseRemoteUser.configure do |config|
+  config.env_key = 'REMOTE_USER'
+  config.auto_create = true
+  config.auto_update = true
+  config.attribute_map = {}
+  config.logout_url = "http://www.ease.ed.ac.uk/logout.html"
+end
