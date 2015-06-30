@@ -69,8 +69,6 @@ Devise.setup do |config|
     # secure: true in order to force SSL only cookies.
     # config.rememberable_options = {}
   end
-  require 'omniauth-remote-user'
-  config.omniauth :RemoteUser
 
 
 end

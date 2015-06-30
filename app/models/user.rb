@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   # using the :database_authenticatable module and also allow for password
   # resets.
   if ENV['CAS_AUTH']
-    devise :database_authenticatable, :omniauthable, :omniauth_providers => [:RemoteUser]
+    devise :database_authenticatable, :remote_user_authenticatable
   else
     devise :database_authenticatable, :recoverable, :rememberable
   end
@@ -87,17 +87,6 @@ class User < ActiveRecord::Base
     reservations.collect(&:equipment_item).flatten
   end
 
-  def self.from_omniauth(auth)
-    where(cas_login: auth.uid).first_or_create do |user|
-      ldap_data = self.search_ldap(auth.uid)
-      user.email = ldap_data["email"]
-      user.password = Devise.friendly_token[0,20]
-      user.first_name = ldap_data["first_name"]
-      user.last_name = ldap_data["last_name"]
-      user.nickname = ldap_data["nickname"]
-      user.username = ldap_data["username"]
-    end
-  end
 
   # rubocop:disable AbcSize, MethodLength, PerceivedComplexity
   def self.search_ldap(login)
