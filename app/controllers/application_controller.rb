@@ -3,6 +3,7 @@
 
 # rubocop:disable ClassLength
 class ApplicationController < ActionController::Base
+  force_ssl if Rails.env.production?
   helper :layout
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
