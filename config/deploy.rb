@@ -1,8 +1,8 @@
 # config valid only for Capistrano 3.1
-lock '3.2.1'
+lock '3.3.5'
 
 set :application, 'Reservations'
-set :repo_url, 'https://github.com/YaleSTC/reservations.git'
+set :repo_url, 'https://github.com/craigsnowden/reservations.git'
 
 # Default branch is :master
 set :branch, "#{ENV['GIT_TAG']}"
@@ -15,11 +15,6 @@ set :deploy_to, "#{ENV['DEPLOY_DIR']}"
 
 # Set RVM version
 set :rvm_ruby_version, '2.1.2'
-
-# include whenever recipes
-set :whenever_command, 'bundle exec whenever'
-set :whenever_environment, defer { stage }
-set :whenever_variables, { "rails_root=#{fetch :release_path}&environment=#{fetch :whenever_environment}" }
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -34,10 +29,10 @@ set :whenever_variables, { "rails_root=#{fetch :release_path}&environment=#{fetc
 # set :pty, true
 
 # Default value for :linked_files is []
-# set :linked_files, %w{config/database.yml}
+set :linked_files, %w{config/database.yml .env config/secrets.yml}
 
 # Default value for linked_dirs is []
-set :linked_dirs, %w{log public/system public/attachments vendor/bundle}
+set :linked_dirs, %w{log public/system public/attachments vendor/bundle tmp/puma tmp/sockets}
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -45,54 +40,46 @@ set :linked_dirs, %w{log public/system public/attachments vendor/bundle}
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-# configuration tasks
-namespace :init do
-  namespace :config do
 
-    desc 'Create .env'
-    task :env
-      execute "cp #{release_path}/.env.example #{release_path}/.env"
-    end
-
-    desc 'Create database.yml'
-    task :db
-      execute "cp #{release_path}/config/database.yml.example.production #{release_path}/config/database.yml"
-    end
-
-    desc 'Create party_foul initializer'
-    task :party_foul
-      execute "cp #{release_path}/config/initializers/party_foul.rb.example #{release_path}/config/initializers/party_foul.rb"
-    end
-  end
-end
 
 namespace :deploy do
+
+  task :start do
+    on roles(:app), in: :sequence, wait: 5 do
+      within release_path do
+        execute :bundle, :exec, :pumactl, '-F', 'config/puma.rb', :start
+      end
+    end
+  end
+  before :start, 'rvm:hook'
+
+  task :stop do
+    on roles(:app), in: :sequence, wait: 5 do
+      within release_path do
+        execute :bundle, :exec, :pumactl, '-F', 'config/puma.rb', :stop
+      end
+    end
+  end
+  before :stop,  'rvm:hook'
 
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
-      execute :touch, release_path.join('tmp/restart.txt')
+      within release_path do
+        execute :bundle, :exec, :pumactl, '-F', 'config/puma.rb', :'phased-restart'
+      end
     end
   end
-
-  after :updated, 'config:env'
-  after :updated, 'config:db'
-  # figure out how to make this optional
-  after :updated, 'config:party_foul'
-  # clear crontab if in staging environment
-  if :stage == 'staging'
-    before :restart, 'whenever:clear_crontab'
-  end
+  before :restart, 'rvm:hook'
 
   after :publishing, :restart
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
+      within release_path do
+        execute :rake, 'tmp:cache:clear'
+      end
     end
   end
 
