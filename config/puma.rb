@@ -32,7 +32,7 @@ state_path "/srv/reservations/shared/tmp/puma/state"
 # “false”.
 #
 # stdout_redirect '/u/apps/lolcat/log/stdout', '/u/apps/lolcat/log/stderr'
-# stdout_redirect '/u/apps/lolcat/log/stdout', '/u/apps/lolcat/log/stderr', true
+stdout_redirect '/srv/reservations/shared/log/stdout', '/srv/reservations/shared/log/stderr', true
 
 # Disable request logging.
 #
