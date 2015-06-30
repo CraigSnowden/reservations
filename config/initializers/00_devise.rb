@@ -70,7 +70,7 @@ Devise.setup do |config|
     # config.rememberable_options = {}
   end
   require 'omniauth-remote-user'
-  config.omniauth :remoteuser
+  config.omniauth :remote_user
 
 
 end
