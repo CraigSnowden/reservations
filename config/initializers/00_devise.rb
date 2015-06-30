@@ -77,6 +77,7 @@ require 'devise_remote_user'
 
 DeviseRemoteUser.configure do |config|
   config.env_key = 'HTTP_REMOTE_USER'
+  config.auth_key = :username
   config.auto_create = true
   config.auto_update = true
   config.attribute_map = {}
