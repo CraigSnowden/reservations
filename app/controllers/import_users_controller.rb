@@ -66,7 +66,7 @@ class ImportUsersController < ApplicationController
 
     # make sure the import went with proper headings / column handling
     accepted_keys = [:username, :first_name, :last_name, :nickname, :phone,
-                     :email, :affiliation]
+                     :email, :affiliation, :cas_login]
     unless imported_users.first.keys == accepted_keys
       flash[:error] = 'Unable to import CSV file. Please ensure that the '\
         'first line of the file exactly matches the sample input (username, '\
